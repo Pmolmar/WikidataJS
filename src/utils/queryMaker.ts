@@ -14,30 +14,33 @@ const query = async () => {
 
     let sparqlQuery = `
     SELECT ?game ?game_label ?developerLabel 
-                                (GROUP_CONCAT(DISTINCT ?genre_label; SEPARATOR=" , ") as ?genres) 
-                                (GROUP_CONCAT(DISTINCT ?platform_label; SEPARATOR=" , ") as ?platforms) 
-    ?logo
+        (GROUP_CONCAT(DISTINCT ?genre_label; SEPARATOR=" , ") as ?genres) 
+        (GROUP_CONCAT(DISTINCT ?platform_label; SEPARATOR=" , ") as ?platforms) 
+        (MIN(?publicationDate) as ?firstPublication)
+        ?logo
     WHERE {
-    ?game wdt:P31 wd:Q7889.
+        ?game wdt:P31 wd:Q7889.
 
-    ?developer rdfs:label "Nintendo"@en.
+        ?developer rdfs:label "Nintendo"@en.
 
-    ?game wdt:P123 ?developer .
-    ?game rdfs:label ?game_label FILTER (LANG(?game_label) = "en").
+        ?game wdt:P123 ?developer .
+        ?game rdfs:label ?game_label FILTER (LANG(?game_label) = "en").
 
-    ?game wdt:P136 ?genre.
-    ?genre rdfs:label ?genre_label FILTER (LANG(?genre_label) = "en").
+        ?game wdt:P136 ?genre.
+        ?genre rdfs:label ?genre_label FILTER (LANG(?genre_label) = "en").
 
-    ?game wdt:P400 ?platform .
-    ?platform rdfs:label ?platform_label filter (lang(?platform_label) = "en").
+        ?game wdt:P400 ?platform .
+        ?platform rdfs:label ?platform_label filter (lang(?platform_label) = "en").
 
-    OPTIONAL {
-        ?game wdt:P154 ?logo.
-    }
-                                                                    
-    SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+        ?game wdt:P577 ?publicationDate .
         
-    } GROUP BY ?game ?game_label ?developerLabel ?logo LIMIT 20
+        OPTIONAL {
+            ?game wdt:P154 ?logo.
+        }
+                                                        
+        SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+        
+    } GROUP BY ?game ?game_label ?developerLabel ?publicationDate ?logo LIMIT 20
     `;
 
 
