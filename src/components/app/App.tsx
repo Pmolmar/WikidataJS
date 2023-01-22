@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, CircularProgress, Grid, Input, Modal, Paper, TextField, Typography } from '@mui/material';
+import { Button, Checkbox, CircularProgress, FormControlLabel, Grid, Input, Modal, Paper, TextField, Typography } from '@mui/material';
 
 import './App.css';
 import query from '../../utils/queryMaker';
@@ -19,6 +19,7 @@ function App() {
   const [plataforma, setPlataforma] = React.useState("")
   const [fechaHasta, setFechaHasta] = React.useState("")
   const [fechaDesde, setFechaDesde] = React.useState("")
+  const [logos, setLogos] = React.useState(false)
 
   const keys = [
     "game",
@@ -69,15 +70,22 @@ function App() {
     setPlataforma(event.target.value);
   };
 
-  const handleChangeFecha = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeFechaDesde = (event: React.ChangeEvent<HTMLInputElement>) => {
     let f = filtro
     f.añoDesde = event.target.value
     setFiltro(f)
     setFechaDesde(event.target.value);
   };
 
+  const handleChangeFechaHasta = (event: React.ChangeEvent<HTMLInputElement>) => {
+    let f = filtro
+    f.añoHasta = event.target.value
+    setFiltro(f)
+    setFechaHasta(event.target.value);
+  };
+
   React.useEffect(() => {
-    query(filtro, pagina).then((data) => {
+    query(filtro, pagina, logos).then((data) => {
       if (data && data.results && data.results.bindings) {
         setLoading(false)
         const addData: Datos[] = []
@@ -103,7 +111,7 @@ function App() {
           VG Atlas
         </Typography>
       </Grid>
-      <Paper style={{ textAlign: 'center', padding: '0.5rem' }} >
+      <Paper style={{ textAlign: 'center', padding: '0.5rem' }}>
         <Grid xs={12} container item id="filtros" alignItems={'center'} justifyItems={'stretch'} gap={1}>
           <Grid xs={2} item>
             <TextField variant='standard' label="Desarrolladora" onChange={handleChangeDes} value={desarrolladora}></TextField>
@@ -117,10 +125,18 @@ function App() {
           <Grid xs={2} item>
             <TextField variant='standard' label="Nombre" onChange={handleChangeNombre} value={nombre}></TextField>
           </Grid>
-          <Grid xs={2} item>
-            <TextField variant='standard' label="Año desde" onChange={handleChangeFecha} value={fechaDesde}></TextField>
+          <Grid xs={1.5} item>
+            <TextField variant='standard' label="Año desde" onChange={handleChangeFechaDesde} value={fechaDesde}></TextField>
           </Grid>
-          <Grid xs={1} item>
+          <Grid xs={1.5} item>
+            <TextField variant='standard' label="Año hasta" onChange={handleChangeFechaHasta} value={fechaHasta}></TextField>
+          </Grid>
+        </Grid>
+        <Grid xs={12} container item justifyContent={'center'} p={2}>
+          <Grid xs={2}>
+            <FormControlLabel control={<Checkbox />} label="Solo logos" value={logos} onChange={() => setLogos(!logos)} />
+          </Grid>
+          <Grid xs={2} item>
             <Button variant='contained' onClick={buscar}>Buscar</Button>
           </Grid>
         </Grid>

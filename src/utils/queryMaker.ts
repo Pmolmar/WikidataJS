@@ -1,6 +1,6 @@
 import { Filtro } from "../types/filtro";
 
-const query = async (data: Filtro, pagina: number = 0) => {
+const query = async (data: Filtro, pagina: number = 0, soloLogos: boolean = false) => {
 
     const ofset = pagina * 20
 
@@ -28,8 +28,12 @@ const query = async (data: Filtro, pagina: number = 0) => {
             ?game wdt:P577 ?publicationDate .
         }
 
-        OPTIONAL {
-            ?game wdt:P154 ?logo.
+        ${soloLogos ?
+            `?game wdt:P154 ?logo.`
+            :
+            `OPTIONAL {
+                ?game wdt:P154 ?logo.
+            }`
         }
         
         ${data.genero ? `FILTER CONTAINS(?genre_label, "${data.genero}")` : ``}
@@ -40,7 +44,7 @@ const query = async (data: Filtro, pagina: number = 0) => {
         
         SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
         
-    } GROUP BY ?game ?game_label ?developerLabel ?logo ORDER BY DESC(?game) LIMIT 20 ${ofset > 0 ? `OFFSET ${ofset}` : ``}
+    } GROUP BY ?game ?game_label ?developerLabel ?logo ORDER BY ASC(?game_label) LIMIT 21 ${ofset > 0 ? `OFFSET ${ofset}` : ``}
     `;
 
 

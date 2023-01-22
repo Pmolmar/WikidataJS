@@ -8,9 +8,9 @@ function GameComponent(props: { datos: Datos; }) {
             <Paper elevation={3}>
                 <Card style={{ minHeight: '30rem', maxHeight: '30rem', overflowY: 'auto' }}>
                     <CardHeader
-                        style={{ height: '4rem', fontSize: '1rem' }}
+                        style={{ height: '4rem' }}
                         title={
-                            <Link rel="noopener noreferrer" target="_blank" href={props.datos.game}>{props.datos.game_label}</Link> //similarly use `a` if not using react-router
+                            <Link style={{ fontSize: '1.3rem'}} rel="noopener noreferrer" target="_blank" href={props.datos.game}>{props.datos.game_label}</Link> //similarly use `a` if not using react-router
                         }
                         subheader={ props.datos.firstPublication.split("-")[0]}
                     />
