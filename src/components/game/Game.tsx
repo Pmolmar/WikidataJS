@@ -1,6 +1,6 @@
 import React from 'react';
-import { Button, Card, CardContent, CardHeader, Grid, Link, List, ListItem, ListItemText, Paper, Typography } from '@mui/material';
-import { Datos, datosVacios } from '../../types/datos';
+import { Card, CardContent, CardHeader, Grid, Link, List, ListItem, ListItemText, Paper } from '@mui/material';
+import { Datos } from '../../types/datos';
 
 function GameComponent(props: { datos: Datos; }) {
     return (
@@ -19,6 +19,7 @@ function GameComponent(props: { datos: Datos; }) {
                         <img
                             style={props.datos.logo ?  { maxHeight: "8rem",width: "-webkit-fill-available" } : { width: '40%', borderRadius:100, border:"0.5rem solid black" }}
                             src={props.datos.logo ? props.datos.logo : 'desconocido.png'}
+                            alt={`${props.datos.game_label} logo`}
                         />
                     </div>
 
