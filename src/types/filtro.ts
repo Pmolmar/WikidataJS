@@ -1,6 +1,8 @@
 export type Filtro = {
     desarrolladora: string
-    genero: string
-    añoDesde: string
-    añoHasta: string
+    nombre?: string 
+    genero?: string 
+    añoDesde?: string 
+    añoHasta?: string 
+    plataforma?: string 
 }

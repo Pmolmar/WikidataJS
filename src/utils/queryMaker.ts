@@ -9,9 +9,7 @@ const isValidDate = async (dateString: string) => {
     return d.toISOString().slice(0, 10) === dateString;
 }
 
-// const query = async (data: Filtro) => {
-const query = async () => {
-
+const query = async (data: Filtro) => {
     let sparqlQuery = `
     SELECT ?game ?game_label ?developerLabel 
         (GROUP_CONCAT(DISTINCT ?genre_label; SEPARATOR=" , ") as ?genres) 
@@ -21,7 +19,7 @@ const query = async () => {
     WHERE {
         ?game wdt:P31 wd:Q7889.
 
-        ?developer rdfs:label "Nintendo"@en.
+        ?developer rdfs:label "${data.desarrolladora}"@en.
 
         ?game wdt:P123 ?developer .
         ?game rdfs:label ?game_label FILTER (LANG(?game_label) = "en").
@@ -31,25 +29,32 @@ const query = async () => {
 
         ?game wdt:P400 ?platform .
         ?platform rdfs:label ?platform_label filter (lang(?platform_label) = "en").
+       
+        OPTIONAL {
+            ?game wdt:P577 ?publicationDate .
+        }
 
-        ?game wdt:P577 ?publicationDate .
-        
         OPTIONAL {
             ?game wdt:P154 ?logo.
         }
-                                                        
+        
+        ${data.genero ? `FILTER CONTAINS(?genre_label, "${data.genero}")` : ``}
+        ${data.nombre ? `FILTER CONTAINS(?game_label, "${data.nombre}")` : ``}
+        ${data.plataforma ? `FILTER CONTAINS(?game_label, "${data.plataforma}")` : ``}
+        ${data.añoDesde ? `FILTER (?publicationDate >= "${data.añoDesde}"^^xsd:dateTime)` : ``}
+        ${data.añoHasta ? `FILTER (?publicationDate <= "${data.añoHasta}"^^xsd:dateTime)` : ``}
+        
         SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
         
-    } GROUP BY ?game ?game_label ?developerLabel ?publicationDate ?logo LIMIT 20
+    } GROUP BY ?game ?game_label ?developerLabel ?logo LIMIT 20
     `;
 
 
-    const content = await fetch(`https://query.wikidata.org/sparql?query=${encodeURIComponent(sparqlQuery)}`,
+    const contentPromise = await fetch(`https://query.wikidata.org/sparql?query=${encodeURIComponent(sparqlQuery)}`,
         { headers: { 'Accept': 'application/sparql-results+json' } })
-        .then(body => body.json()).then((data) => data.results);
+        .then(body => body.json());
 
-    console.log(content)
-    return content
+    return contentPromise
 }
 
 export default query
