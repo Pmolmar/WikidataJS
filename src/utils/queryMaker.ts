@@ -9,7 +9,10 @@ const isValidDate = async (dateString: string) => {
     return d.toISOString().slice(0, 10) === dateString;
 }
 
-const query = async (data: Filtro) => {
+const query = async (data: Filtro, pagina: number = 0) => {
+
+    const ofset = pagina * 20
+
     let sparqlQuery = `
     SELECT ?game ?game_label ?developerLabel 
         (GROUP_CONCAT(DISTINCT ?genre_label; SEPARATOR=" , ") as ?genres) 
@@ -19,9 +22,9 @@ const query = async (data: Filtro) => {
     WHERE {
         ?game wdt:P31 wd:Q7889.
 
-        ?developer rdfs:label "${data.desarrolladora}"@en.
-
+        ${data.desarrolladora ? `?developer rdfs:label "${data.desarrolladora}"@en.` : ``}
         ?game wdt:P123 ?developer .
+
         ?game rdfs:label ?game_label FILTER (LANG(?game_label) = "en").
 
         ?game wdt:P136 ?genre.
@@ -46,7 +49,7 @@ const query = async (data: Filtro) => {
         
         SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
         
-    } GROUP BY ?game ?game_label ?developerLabel ?logo LIMIT 20
+    } GROUP BY ?game ?game_label ?developerLabel ?logo ORDER BY DESC(?game) LIMIT 20 ${ofset > 0 ? `OFFSET ${ofset}` : ``}
     `;
 
 

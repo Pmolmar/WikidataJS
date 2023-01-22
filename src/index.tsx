@@ -3,13 +3,37 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './components/app/App';
 import reportWebVitals from './reportWebVitals';
+import { createTheme, ThemeProvider } from '@mui/material';
+import { purple, green } from '@mui/material/colors';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+
+const theme = createTheme({
+  typography: {
+    fontFamily: 'Andale Mono',
+    fontSize: 14
+  },
+  palette: {
+    background:{
+      default: purple[600],
+      paper: purple["A100"]
+    },
+    primary: {
+      main: '#000',
+    },
+    secondary: {
+      main: green[500],
+    },
+  },
+});
+
 root.render(
   <React.StrictMode>
-    <App />
+    <ThemeProvider theme={theme}>
+      <App />
+    </ThemeProvider>
   </React.StrictMode>
 );
 
